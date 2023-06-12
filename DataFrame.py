@@ -393,12 +393,13 @@ merged_df["month_hired"] = pd.to_datetime(merged_df['hire_date']).dt.month
 summer_months = merged_df[merged_df['month_hired'].isin([6, 7, 8])]
 
 # Filter out the winter months
-winter_months = merged_df[merged_df['month_hired'].isin([1, 2, 11])]
+winter_months = merged_df[merged_df['month_hired'].isin([1, 2, 12])]
 
 print("There are more hires in summer months than winter months since the summer months had",
-      summer_months['month_hired'].sum(), "hires and the winter months had",
-      winter_months['month_hired'].sum(), "hires making there a", summer_months['month_hired'].sum() -
-      winter_months['month_hired'].sum(), "difference in hires depending on the season")
+      summer_months['month_hired'].value_counts().sum(), "hires and the winter months had",
+      winter_months['month_hired'].value_counts().sum(), "hires making there a",
+      summer_months['month_hired'].value_counts().sum() -
+      winter_months['month_hired'].value_counts().sum(), "difference in hires depending on the season")
 print()
 
 merged_df.to_excel('merged.xlsx', index=False)
