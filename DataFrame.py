@@ -188,8 +188,6 @@ print()
 
 murray_bonuses = merged_df[(merged_df['agent_name'] == 'Murray Goldman') & (merged_df['year_hired'] == '2023')]
 
-
-
 Murray_Goldman_Bonus = calculate_bonus(murray_bonuses, "Murray Goldman")
 
 print("Murray Goldman's Bonus was", Murray_Goldman_Bonus , "dollars")
@@ -318,15 +316,15 @@ hire_date['first_contact_date'] = pd.to_datetime(hire_date['first_contact_date']
 
 
 # Extract the day of the week
-hire_date['day_of_week'] = hire_date['first_contact_date'].dt.day_name()
+hire_date['day_of_week_contacted'] = hire_date['first_contact_date'].dt.day_name()
 
 hire_date.to_excel('HireDate.xlsx', index=False)
 
 merged_df = pd.merge(merged_df, hire_date, on=["last_name", "first_name"])
 
 print("This is true since the 'first contact day' with the least amount of hires is",
-      merged_df['day_of_week'].value_counts().idxmin())
-
+      merged_df['day_of_week_contacted'].value_counts().idxmin())
+print()
 
 merged_df.to_excel('merged.xlsx', index=False)
 
@@ -336,3 +334,71 @@ merged_df.to_excel('merged.xlsx', index=False)
 # They therefore want to impose the following rule: no bonuses are given
 # for any candidates first contacted on a Shabbos. Please recalculate the bonuses.
 
+# Filter out rows where 'day_of_week_contacted' is not 'Saturday'
+df = merged_df[merged_df['day_of_week_contacted'] != 'Saturday']
+
+df = df[df['year_hired'] >= '2015']
+
+jonathan_bonuses = df[df['agent_name'] == 'Jonathan Braiden']
+
+Jonathan_Braiden_Bonus = calculate_bonus(jonathan_bonuses, "Jonathan Braiden")
+
+# Iterate over the name counts
+for week, count in jonathan_bonuses["week_year"].value_counts().items():
+    if count > 1:
+        Jonathan_Braiden_Bonus += (count - 1) * 10
+
+print("Jonathan's bonus was", Jonathan_Braiden_Bonus, "dollars from 2015")
+print()
+
+df = df[df['year_hired'] >= '2015']
+
+zehava_bonuses = df[df['agent_name'] == 'Zehava David']
+
+Zehava_David_Bonus = calculate_bonus(zehava_bonuses, "Zehava David")
+
+# Iterate over the name counts
+for week, count in zehava_bonuses["week_year"].value_counts().items():
+    if count > 1:
+        Zehava_David_Bonus += (count - 1) * 10
+
+print("Zehava's bonus was", Zehava_David_Bonus, "dollars from 2015")
+print()
+
+df = df[df['year_hired'] >= '2015']
+
+murray_bonuses = df[df['agent_name'] == 'Murray Goldman']
+
+Murray_Goldman_Bonus = calculate_bonus(murray_bonuses, "Murray Goldman")
+
+# Iterate over the name counts
+for week, count in murray_bonuses["week_year"].value_counts().items():
+    if count > 1:
+        Murray_Goldman_Bonus += (count - 1) * 10
+
+print("Murray's bonus was", Murray_Goldman_Bonus, "dollars from 2015")
+print()
+
+merged_df.to_excel('merged.xlsx', index=False)
+
+# Question 7
+
+# The HR department wants to know
+# if winter months see more hires than summer months. Is there a significant difference?
+
+# Extract the month hired
+merged_df["month_hired"] = pd.to_datetime(merged_df['hire_date']).dt.month
+
+# Filter out the summer months
+summer_months = merged_df[merged_df['month_hired'].isin([6, 7, 8])]
+
+# Filter out the winter months
+winter_months = merged_df[merged_df['month_hired'].isin([1, 2, 11])]
+
+print("There are more hires in summer months than winter months since the summer months had",
+      summer_months['month_hired'].sum(), "hires and the winter months had",
+      winter_months['month_hired'].sum(), "hires making there a", summer_months['month_hired'].sum() -
+      winter_months['month_hired'].sum(), "difference in hires depending on the season")
+print()
+
+merged_df.to_excel('merged.xlsx', index=False)
